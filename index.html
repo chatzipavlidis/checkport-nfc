@@ -15,6 +15,13 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -22,6 +29,7 @@
     <p>Tap an NFC card to scan</p>
     <button id="scanButton">Start NFC Scan</button>
     <p id="status"></p>
+    <div id="output"></div>
 
     <script>
         document.getElementById("scanButton").addEventListener("click", async () => {
@@ -33,12 +41,14 @@
                     
                     ndef.onreading = event => {
                         const decoder = new TextDecoder();
+                        let outputHTML = "<strong>NFC Data:</strong><br>";
                         for (const record of event.message.records) {
-                            console.log("NFC Record Type:", record.recordType);
-                            console.log("MIME Type:", record.mediaType);
-                            console.log("Data:", decoder.decode(record.data));
+                            outputHTML += `<p><strong>Record Type:</strong> ${record.recordType}</p>`;
+                            outputHTML += `<p><strong>MIME Type:</strong> ${record.mediaType || "N/A"}</p>`;
+                            outputHTML += `<p><strong>Data:</strong> ${decoder.decode(record.data)}</p>`;
                         }
-                        document.getElementById("status").textContent = "NFC tag read successfully! Check console for details.";
+                        document.getElementById("output").innerHTML = outputHTML;
+                        document.getElementById("status").textContent = "NFC tag read successfully!";
                     };
                 } catch (error) {
                     console.error("NFC scan failed:", error);
